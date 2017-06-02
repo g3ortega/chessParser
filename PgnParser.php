@@ -126,13 +126,28 @@ class PgnParser
     {
         if (!isset($this->pgnGames)) {
             if ($this->pgnFile && !isset($this->pgnContent)) {
-
-                $this->pgnContent = file_get_contents($this->pgnFile);
+                $raw_content = file_get_contents($this->pgnFile);
+                $this->pgnContent = $this->cleanContent($raw_content);
             }
+            
             $this->pgnGames = $this->splitPgnIntoGames($this->cleanPgn($this->pgnContent));
+            
         }
 
         return $this->pgnGames;
+    }
+    
+    public function cleanContent($content) {
+        
+        // $encoding = mb_detect_encoding ($content)
+        
+        // if ($encoding != 'ASCII') {
+        //     $content =  iconv($encoding, "ASCII//TRANSLIT", utf8_encode($raw_content));
+        //     $content = mb_convert_encoding($raw_content, "UTF-8", 'HTML-ENTITIES'); 
+        // }
+        
+        //  
+        return preg_replace('/^[^\[]*\[\s*/', '[', $content);
     }
     
     public function countGames(){
